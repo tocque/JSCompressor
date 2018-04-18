@@ -39,18 +39,28 @@ namespace JSCompressor
             string[] loadlist = main.Substring(index, index2 - index).Replace("\"","").Replace("'","").Split(',');
 
             Console.WriteLine("正在压缩核心文件...");
+            string libs = "";
             foreach (string one in loadlist)
             {
                 try
                 {
                     string data = File.ReadAllText(directory + "libs\\" + one + ".js");
-                    File.WriteAllText(directory + "libs\\" + one + ".min.js", compressor.Compress(data));
+                    string compressed = compressor.Compress(data);
+                    libs += compressed;
+                    File.WriteAllText(directory + "libs\\" + one + ".min.js", compressed);
                     Console.WriteLine("压缩中：libs/" + one + ".js ===> libs/" + one + ".min.js");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(one+".js 压缩出错：" + e.Message);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(one + ".js 压缩出错：" + e.Message);
+                    Console.ResetColor();
                 }
+            }
+            if (isV2)
+            {
+                File.WriteAllText(directory + "libs\\libs.min.js", libs);
+                Console.WriteLine("======> 所有核心文件已压缩到 libs/libs.min.js。");
             }
             Console.WriteLine("------ 核心文件压缩完毕 ------\n\n");
 
@@ -63,12 +73,14 @@ namespace JSCompressor
                 loadlist = main.Substring(index, index2 - index).Replace("\"", "").Replace("'", "").Split(',');
 
                 Console.WriteLine("正在压缩项目文件...");
+                string project = "";
                 foreach (string one in loadlist)
                 {
                     try
                     {
                         string data = File.ReadAllText(directory + "project\\" + one + ".js");
                         data = compressor.Compress(data);
+                        project += data;
                         File.WriteAllText(directory + "project\\" + one + ".min.js", data);
                         Console.WriteLine("压缩中：project/" + one + ".js ===> project/" + one + ".min.js");
 
@@ -82,9 +94,13 @@ namespace JSCompressor
                     }
                     catch (Exception e)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(one + ".js 压缩出错：" + e.Message);
+                        Console.ResetColor();
                     }
                 }
+                File.WriteAllText(directory + "project\\project.min.js", project);
+                Console.WriteLine("======> 所有核心文件已压缩到 project/project.min.js。");
                 Console.WriteLine("------ 项目文件压缩完毕 ------\n\n");
             }
 
@@ -107,7 +123,9 @@ namespace JSCompressor
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("！！！！！！" + map + ".js 压缩出错：" + e.Message + "  请检查是否存在语法错误。");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(map + ".js 压缩出错：" + e.Message);
+                    Console.ResetColor();
                 }
             }
             File.WriteAllText(directory + floorDir + "\\floors.min.js", maps);
