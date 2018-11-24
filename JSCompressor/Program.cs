@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using EcmaScript.NET;
 using Yahoo.Yui.Compressor;
 
 namespace JSCompressor
 {
     class Program
     {
+
         static void Main(string[] args)
         {
             Console.WriteLine("====== 压缩工具，可以对JS文件进行压缩，以缩小数据大小 ======\n");
@@ -49,6 +51,13 @@ namespace JSCompressor
                     libs += compressed;
                     File.WriteAllText(directory + "libs\\" + one + ".min.js", compressed);
                     Console.WriteLine("压缩中：libs/" + one + ".js ===> libs/" + one + ".min.js");
+                }
+                catch (EcmaScriptException e)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(one + ".js 压缩出错：" + e.Message);
+                    Console.WriteLine("[Line {0} Col {1}]: {2}", e.LineNumber, e.ColumnNumber, e.LineSource);
+                    Console.ResetColor();
                 }
                 catch (Exception e)
                 {
@@ -92,6 +101,13 @@ namespace JSCompressor
                         }
 
                     }
+                    catch (EcmaScriptException e)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(one + ".js 压缩出错：" + e.Message);
+                        Console.WriteLine("[Line {0} Col {1}]: {2}", e.LineNumber, e.ColumnNumber, e.LineSource);
+                        Console.ResetColor();
+                    }
                     catch (Exception e)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -121,6 +137,13 @@ namespace JSCompressor
                     maps += compressor.Compress(File.ReadAllText(directory + floorDir + "\\floors\\" + map + ".js"));
                     Console.WriteLine(map + ".js已压缩");
                 }
+                catch (EcmaScriptException e)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(map + ".js 压缩出错：" + e.Message);
+                    Console.WriteLine("[Line {0} Col {1}]: {2}", e.LineNumber, e.ColumnNumber, e.LineSource);
+                    Console.ResetColor();
+                }
                 catch (Exception e)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -140,5 +163,6 @@ namespace JSCompressor
 
             Console.ReadKey();
         }
+
     }
 }
