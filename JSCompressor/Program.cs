@@ -192,389 +192,48 @@ namespace JSCompressor
             Console.WriteLine("======> 所有地图文件已压缩到" + floorDir + "/floors.min.js。");
             Console.WriteLine("------ 地图文件压缩完毕 ------\n\n");
 
-            Console.WriteLine("正在压缩图片文件...");
-            if (imageList == null)
+            if (isV2)
             {
-                index = main.IndexOf("this.images=[") + 13;
-                index2 = main.IndexOf("]", index);
-                imageList = main.Substring(index, index2 - index).Replace("\"", "").Replace("'", "").Split(',');
+                Console.WriteLine("正在压缩图片文件...");
+                Directory.SetCurrentDirectory(directory + "project\\images\\");
+                List<string> ml = imageList.ToList();
+                if (!ml.Contains("hero.png")) ml.Add("hero.png");
+                Zip("images.zip", ml);
+                Console.WriteLine("======> 所有图片文件已压缩到 project/images/images.zip。");
+                Console.WriteLine("------ 图片文件压缩完毕 ------\n\n");
+
+                Console.WriteLine("正在压缩材质图片文件...");
+                Zip("materials.zip", materialsList, s => s + ".png");
+                Console.WriteLine("======> 所有材质图片文件已压缩到 project/images/materials.zip。");
+                Console.WriteLine("------ 材质图片文件压缩完毕 ------\n\n");
+
+                Console.WriteLine("正在压缩瓦片图片文件...");
+                Zip("tilesets.zip", tilesetsList);
+                Console.WriteLine("======> 所有瓦片图片文件已压缩到 project/images/tilesets.zip。");
+                Console.WriteLine("------ 瓦片图片文件压缩完毕 ------\n\n");
+
+                Console.WriteLine("正在压缩自动元件图片文件...");
+                Zip("autotiles.zip", autotilesList, e => e.Split(':')[0]+".png");
+                Console.WriteLine("======> 所有自动元件图片文件已压缩到 project/images/autotiles.zip。");
+                Console.WriteLine("------ 自动元件图片文件压缩完毕 ------\n\n");
+
+                Console.WriteLine("正在压缩动画文件...");
+                Directory.SetCurrentDirectory("..\\animates\\");
+                Zip("animates.zip", animationList, e => e + ".animate");
+                Console.WriteLine("======> 所有动画文件已压缩到 project/animates/animates.zip。");
+                Console.WriteLine("------ 动画文件压缩完毕 ------\n\n");
+
+                Console.WriteLine("正在压缩音效文件...");
+                Directory.SetCurrentDirectory("..\\sounds\\");
+                Zip("sounds.zip", soundList);
+                Console.WriteLine("======> 所有音效文件已压缩到 project/sounds/sounds.zip。");
+                Console.WriteLine("------ 音效文件压缩完毕 ------\n\n");
+
+                Console.WriteLine("正在压缩音乐文件...");
+                Zip("bgms.zip", bgmList);
+                Console.WriteLine("======> 所有音乐文件已压缩到 project/sounds/bgms.zip。");
+                Console.WriteLine("------ 音乐文件压缩完毕 ------\n\n");
             }
-            Directory.SetCurrentDirectory(directory + floorDir + "\\images\\");
-
-            bool check = false;
-            List<string> ml = imageList.ToList();
-            foreach (var one in ml)
-            {
-                if (one == "hero.png")
-                {
-                    check = true;
-                    break;
-                }
-            }
-            if (!check)
-            {
-                ml.Add("hero.png");
-            }
-
-            if (File.Exists("images.zip"))
-            {
-                File.Delete("images.zip");
-            }
-
-            using (ZipOutputStream s = new ZipOutputStream(File.Create("images.zip")))
-            {
-                s.SetLevel(9);
-                s.UseZip64 = UseZip64.Off;
-                byte[] buffer = new byte[2048];
-                foreach (string file in ml)
-                {
-                    try
-                    {
-                        ZipEntry entry = new ZipEntry(file);
-                        entry.DateTime = DateTime.Now;
-                        s.PutNextEntry(entry);
-                        using (FileStream fs = File.OpenRead(file))
-                        {
-                            int sourceBytes;
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                s.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                            fs.Close();
-                            fs.Dispose();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(file + " 压缩出错：" + e.Message);
-                        Console.ResetColor();
-                    }
-
-                    Console.WriteLine(file + "已压缩");
-                }
-                s.Finish();
-                s.Close();
-            }
-            Console.WriteLine("======> 所有图片文件已压缩到" + floorDir + "/images/images.zip。");
-            Console.WriteLine("------ 图片文件压缩完毕 ------\n\n");
-
-            Console.WriteLine("正在压缩材质图片文件...");
-            if (materialsList == null)
-            {
-                index = main.IndexOf("this.materials=[") + 16;
-                index2 = main.IndexOf("]", index);
-                materialsList = main.Substring(index, index2 - index).Replace("\"", "").Replace("'", "").Split(',');
-            }
-
-            if (File.Exists("materials.zip"))
-            {
-                File.Delete("materials.zip");
-            }
-
-            using (ZipOutputStream s = new ZipOutputStream(File.Create("materials.zip")))
-            {
-                s.SetLevel(9);
-                s.UseZip64 = UseZip64.Off;
-                byte[] buffer = new byte[2048];
-                foreach (string file in materialsList.ToList())
-                {
-                    try
-                    {
-                        ZipEntry entry = new ZipEntry(file + ".png");
-                        entry.DateTime = DateTime.Now; 
-                        s.PutNextEntry(entry);
-                        using (FileStream fs = File.OpenRead(file + ".png"))
-                        {
-                            int sourceBytes; 
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                s.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                            fs.Close();
-                            fs.Dispose();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(file + ".png 压缩出错：" + e.Message);
-                        Console.ResetColor();
-                    }
-
-                    Console.WriteLine(file + ".png 已压缩");
-                }
-                s.Finish();
-                s.Close();
-            }
-            Console.WriteLine("======> 所有材质图片文件已压缩到" + floorDir + "/images/materials.zip。");
-            Console.WriteLine("------ 材质图片文件压缩完毕 ------\n\n");
-
-            Console.WriteLine("正在压缩瓦片图片文件...");
-            if (tilesetsList == null)
-            {
-                index = main.IndexOf("this.tilesets=[") + 16;
-                index2 = main.IndexOf("]", index);
-                tilesetsList = main.Substring(index, index2 - index).Replace("\"", "").Replace("'", "").Split(',');
-            }
-
-            if (File.Exists("tilesets.zip"))
-            {
-                File.Delete("tilesets.zip");
-            }
-
-            using (ZipOutputStream s = new ZipOutputStream(File.Create("tilesets.zip")))
-            {
-                s.SetLevel(9);
-                s.UseZip64 = UseZip64.Off;
-                byte[] buffer = new byte[2048];
-                foreach (string file in tilesetsList.ToList())
-                {
-                    try
-                    {
-                        ZipEntry entry = new ZipEntry(file);
-                        entry.DateTime = DateTime.Now;
-                        s.PutNextEntry(entry);
-                        using (FileStream fs = File.OpenRead(file))
-                        {
-                            int sourceBytes;
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                s.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                            fs.Close();
-                            fs.Dispose();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(file + " 压缩出错：" + e.Message);
-                        Console.ResetColor();
-                    }
-
-                    Console.WriteLine(file + "已压缩");
-                }
-                s.Finish();
-                s.Close();
-            }
-            Console.WriteLine("======> 所有瓦片图片文件已压缩到" + floorDir + "/images/tilesets.zip。");
-            Console.WriteLine("------ 瓦片图片文件压缩完毕 ------\n\n");
-
-
-            Console.WriteLine("正在压缩自动元件图片文件...");
-            if (autotilesList == null)
-            {
-                index = main.IndexOf("this.autotiles=[") + 16;
-                index2 = main.IndexOf("]", index);
-                autotilesList = main.Substring(index, index2 - index).Replace("\"", "").Replace("'", "").Split(',');
-            }
-
-            if (File.Exists("autotiles.zip"))
-            {
-                File.Delete("autotiles.zip");
-            }
-
-            using (ZipOutputStream s = new ZipOutputStream(File.Create("autotiles.zip")))
-            {
-                s.SetLevel(9);
-                s.UseZip64 = UseZip64.Off;
-                byte[] buffer = new byte[2048];
-                foreach (string one in autotilesList.ToList())
-                {
-                    string file = "";
-                    try
-                    {
-                        int i = one.IndexOf(":");
-                        file = one.Substring(0,i);
-                        ZipEntry entry = new ZipEntry(file + ".png");
-                        entry.DateTime = DateTime.Now;
-                        s.PutNextEntry(entry);
-                        using (FileStream fs = File.OpenRead(file + ".png"))
-                        {
-                            int sourceBytes;
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                s.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                            fs.Close();
-                            fs.Dispose();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(file + ".png 压缩出错：" + e.Message);
-                        Console.ResetColor();
-                    }
-
-                    Console.WriteLine(file + ".png 已压缩");
-                }
-                s.Finish();
-                s.Close();
-            }
-            Console.WriteLine("======> 所有自动元件图片文件已压缩到" + floorDir + "/images/autotiles.zip。");
-            Console.WriteLine("------ 自动元件图片文件压缩完毕 ------\n\n");
-
-            Console.WriteLine("正在压缩动画文件...");
-            if (animationList == null)
-            {
-                index = main.IndexOf("this.animates=[") + 15;
-                index2 = main.IndexOf("]", index);
-                animationList = main.Substring(index, index2 - index).Replace("\"", "").Replace("'", "").Split(',');
-            }
-            Directory.SetCurrentDirectory(directory + "\\animates\\");
-            if (File.Exists("animates.zip"))
-            {
-                File.Delete("animates.zip");
-            }
-
-            using (ZipOutputStream s = new ZipOutputStream(File.Create("animates.zip")))
-            {
-                s.SetLevel(9);
-                s.UseZip64 = UseZip64.Off;
-                byte[] buffer = new byte[2048];
-                foreach (string file in animationList.ToList())
-                {
-                    try
-                    {
-                        ZipEntry entry = new ZipEntry(file + ".animate");
-                        entry.DateTime = DateTime.Now;
-                        s.PutNextEntry(entry);
-                        using (FileStream fs = File.OpenRead(file + ".animate"))
-                        {
-                            int sourceBytes;
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                s.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                            fs.Close();
-                            fs.Dispose();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(file + ".animate 压缩出错：" + e.Message);
-                        Console.ResetColor();
-                    }
-
-                    Console.WriteLine(file + ".animate 已压缩");
-                }
-                s.Finish();
-                s.Close();
-            }
-            Console.WriteLine("======> 所有动画文件已压缩到" + floorDir + "/animates/animates.zip。");
-            Console.WriteLine("------ 动画文件压缩完毕 ------\n\n");
-
-            Console.WriteLine("正在压缩音效文件...");
-            if (soundList == null)
-            {
-                index = main.IndexOf("this.sounds=[") + 13;
-                index2 = main.IndexOf("]", index);
-                soundList = main.Substring(index, index2 - index).Replace("\"", "").Replace("'", "").Split(',');
-            }
-            Directory.SetCurrentDirectory(directory + "\\sounds\\");
-            if (File.Exists("sounds.zip"))
-            {
-                File.Delete("sounds.zip");
-            }
-
-            using (ZipOutputStream s = new ZipOutputStream(File.Create("sounds.zip")))
-            {
-                s.SetLevel(9);
-                s.UseZip64 = UseZip64.Off;
-                byte[] buffer = new byte[2048];
-                foreach (string file in soundList.ToList())
-                {
-                    try
-                    {
-                        ZipEntry entry = new ZipEntry(file);
-                        entry.DateTime = DateTime.Now;
-                        s.PutNextEntry(entry);
-                        using (FileStream fs = File.OpenRead(file))
-                        {
-                            int sourceBytes;
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                s.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                            fs.Close();
-                            fs.Dispose();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(file + " 压缩出错：" + e.Message);
-                        Console.ResetColor();
-                    }
-
-                    Console.WriteLine(file + "已压缩");
-                }
-                s.Finish();
-                s.Close();
-            }
-            Console.WriteLine("======> 所有音效文件已压缩到" + floorDir + "/sounds/sounds.zip。");
-            Console.WriteLine("------ 音效文件压缩完毕 ------\n\n");
-
-            Console.WriteLine("正在压缩音乐文件...");
-            if (bgmList == null)
-            {
-                index = main.IndexOf("this.bgms=[") + 11;
-                index2 = main.IndexOf("]", index);
-                bgmList = main.Substring(index, index2 - index).Replace("\"", "").Replace("'", "").Split(',');
-            }
-
-            if (File.Exists("bgms.zip"))
-            {
-                File.Delete("bgms.zip");
-            }
-
-            using (ZipOutputStream s = new ZipOutputStream(File.Create("bgms.zip")))
-            {
-                s.SetLevel(9);
-                s.UseZip64 = UseZip64.Off;
-                byte[] buffer = new byte[2048];
-                foreach (string file in bgmList.ToList())
-                {
-                    try
-                    {
-                        ZipEntry entry = new ZipEntry(file);
-                        entry.DateTime = DateTime.Now;
-                        s.PutNextEntry(entry);
-                        using (FileStream fs = File.OpenRead(file))
-                        {
-                            int sourceBytes;
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                s.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                            fs.Close();
-                            fs.Dispose();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(file + " 压缩出错：" + e.Message);
-                        Console.ResetColor();
-                    }
-
-                    Console.WriteLine(file + "已压缩");
-                }
-                s.Finish();
-                s.Close();
-            }
-            Console.WriteLine("======> 所有音乐文件已压缩到" + floorDir + "/sounds/bgms.zip。");
-            Console.WriteLine("------ 音乐文件压缩完毕 ------\n\n");
 
             Console.WriteLine("=====================================================");
             Console.WriteLine("警告：请将main.js中的 this.useCompress 从 false 改成 true，才能真正加载压缩后的代码。");
@@ -584,5 +243,52 @@ namespace JSCompressor
 
             Console.ReadKey();
         }
+
+        static void Zip(string filename, IEnumerable<string> fileList, Func<string, string> func = null)
+        {
+            if (File.Exists(filename))  File.Delete(filename);
+            if (fileList == null) return;
+            using (ZipOutputStream s = new ZipOutputStream(File.Create(filename)))
+            {
+                s.SetLevel(9);
+                s.UseZip64 = UseZip64.Off;
+                byte[] buffer = new byte[2048];
+                foreach (string f in fileList)
+                {
+                    if (f.Length == 0) continue;
+                    string file = f;
+                    if (func != null) file = func(file);
+                    try
+                    {
+                        ZipEntry entry = new ZipEntry(file);
+                        entry.DateTime = DateTime.Now;
+                        s.PutNextEntry(entry);
+                        using (FileStream fs = File.OpenRead(file))
+                        {
+                            int sourceBytes;
+                            do
+                            {
+                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
+                                s.Write(buffer, 0, sourceBytes);
+                            } while (sourceBytes > 0);
+                            fs.Close();
+                            fs.Dispose();
+                        }
+                        Console.WriteLine(file + "已压缩");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(file + " 压缩出错：" + e.Message);
+                        Console.ResetColor();
+                    }
+
+                }
+                s.Finish();
+                s.Close();
+            }
+        }
     }
+
+
 }
