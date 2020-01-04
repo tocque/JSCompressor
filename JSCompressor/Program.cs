@@ -228,11 +228,6 @@ namespace JSCompressor
                 Zip("sounds.zip", soundList);
                 Console.WriteLine("======> 所有音效文件已压缩到 project/sounds/sounds.zip。");
                 Console.WriteLine("------ 音效文件压缩完毕 ------\n\n");
-
-                Console.WriteLine("正在压缩音乐文件...");
-                Zip("bgms.zip", bgmList);
-                Console.WriteLine("======> 所有音乐文件已压缩到 project/sounds/bgms.zip。");
-                Console.WriteLine("------ 音乐文件压缩完毕 ------\n\n");
             }
 
             Console.WriteLine("=====================================================");
