@@ -198,35 +198,35 @@ namespace JSCompressor
                 Directory.SetCurrentDirectory(directory + "project\\images\\");
                 List<string> ml = imageList.ToList();
                 if (!ml.Contains("hero.png")) ml.Add("hero.png");
-                Zip("images.zip", ml);
-                Console.WriteLine("======> 所有图片文件已压缩到 project/images/images.zip。");
+                Zip("images.h5data", ml);
+                Console.WriteLine("======> 所有图片文件已压缩到 project/images/images.h5data。");
                 Console.WriteLine("------ 图片文件压缩完毕 ------\n\n");
 
                 Console.WriteLine("正在压缩材质图片文件...");
-                Zip("materials.zip", materialsList, s => s + ".png");
-                Console.WriteLine("======> 所有材质图片文件已压缩到 project/images/materials.zip。");
+                Zip("materials.h5data", materialsList, s => s + ".png");
+                Console.WriteLine("======> 所有材质图片文件已压缩到 project/images/materials.h5data。");
                 Console.WriteLine("------ 材质图片文件压缩完毕 ------\n\n");
 
                 Console.WriteLine("正在压缩瓦片图片文件...");
-                Zip("tilesets.zip", tilesetsList);
-                Console.WriteLine("======> 所有瓦片图片文件已压缩到 project/images/tilesets.zip。");
+                Zip("tilesets.h5data", tilesetsList);
+                Console.WriteLine("======> 所有瓦片图片文件已压缩到 project/images/tilesets.h5data。");
                 Console.WriteLine("------ 瓦片图片文件压缩完毕 ------\n\n");
 
                 Console.WriteLine("正在压缩自动元件图片文件...");
-                Zip("autotiles.zip", autotilesList, e => e.Split(':')[0]+".png");
-                Console.WriteLine("======> 所有自动元件图片文件已压缩到 project/images/autotiles.zip。");
+                Zip("autotiles.h5data", autotilesList, e => e.Split(':')[0]+".png");
+                Console.WriteLine("======> 所有自动元件图片文件已压缩到 project/images/autotiles.h5data。");
                 Console.WriteLine("------ 自动元件图片文件压缩完毕 ------\n\n");
 
                 Console.WriteLine("正在压缩动画文件...");
                 Directory.SetCurrentDirectory("..\\animates\\");
-                Zip("animates.zip", animationList, e => e + ".animate");
-                Console.WriteLine("======> 所有动画文件已压缩到 project/animates/animates.zip。");
+                Zip("animates.h5data", animationList, e => e + ".animate");
+                Console.WriteLine("======> 所有动画文件已压缩到 project/animates/animates.h5data。");
                 Console.WriteLine("------ 动画文件压缩完毕 ------\n\n");
 
                 Console.WriteLine("正在压缩音效文件...");
                 Directory.SetCurrentDirectory("..\\sounds\\");
-                Zip("sounds.zip", soundList);
-                Console.WriteLine("======> 所有音效文件已压缩到 project/sounds/sounds.zip。");
+                Zip("sounds.h5data", soundList);
+                Console.WriteLine("======> 所有音效文件已压缩到 project/sounds/sounds.h5data。");
                 Console.WriteLine("------ 音效文件压缩完毕 ------\n\n");
             }
 
