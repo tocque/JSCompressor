@@ -55,8 +55,8 @@ namespace JSCompressor
                     string data = File.ReadAllText(directory + "libs\\" + one + ".js");
                     string compressed = compressor.Compress(data);
                     libs += compressed;
-                    File.WriteAllText(directory + "libs\\" + one + ".min.js", compressed);
-                    Console.WriteLine("压缩中：libs/" + one + ".js ===> libs/" + one + ".min.js");
+                    //File.WriteAllText(directory + "libs\\" + one + ".min.js", compressed);
+                    //Console.WriteLine("压缩中：libs/" + one + ".js ===> libs/" + one + ".min.js");
                 }
                 catch (EcmaScriptException e)
                 {
@@ -103,8 +103,8 @@ namespace JSCompressor
                         string data = File.ReadAllText(directory + "project\\" + one + ".js");
                         data = compressor.Compress(data);
                         project += data;
-                        File.WriteAllText(directory + "project\\" + one + ".min.js", data);
-                        Console.WriteLine("压缩中：project/" + one + ".js ===> project/" + one + ".min.js");
+                        //File.WriteAllText(directory + "project\\" + one + ".min.js", data);
+                        //Console.WriteLine("压缩中：project/" + one + ".js ===> project/" + one + ".min.js");
 
                         // 读到data.js
                         if (one.Equals("data"))
@@ -197,24 +197,26 @@ namespace JSCompressor
                 Console.WriteLine("正在压缩图片文件...");
                 Directory.SetCurrentDirectory(directory + "project\\images\\");
                 List<string> ml = imageList.ToList();
-                if (!ml.Contains("hero.png")) ml.Add("hero.png");
                 Zip("images.h5data", ml);
                 Console.WriteLine("======> 所有图片文件已压缩到 project/images/images.h5data。");
                 Console.WriteLine("------ 图片文件压缩完毕 ------\n\n");
 
+                Directory.SetCurrentDirectory("..\\materials\\");
                 Console.WriteLine("正在压缩材质图片文件...");
                 Zip("materials.h5data", materialsList, s => s + ".png");
-                Console.WriteLine("======> 所有材质图片文件已压缩到 project/images/materials.h5data。");
+                Console.WriteLine("======> 所有材质图片文件已压缩到 project/materials/materials.h5data。");
                 Console.WriteLine("------ 材质图片文件压缩完毕 ------\n\n");
 
+                Directory.SetCurrentDirectory("..\\tilesets\\");
                 Console.WriteLine("正在压缩瓦片图片文件...");
                 Zip("tilesets.h5data", tilesetsList);
-                Console.WriteLine("======> 所有瓦片图片文件已压缩到 project/images/tilesets.h5data。");
+                Console.WriteLine("======> 所有瓦片图片文件已压缩到 project/tilesets/tilesets.h5data。");
                 Console.WriteLine("------ 瓦片图片文件压缩完毕 ------\n\n");
 
+                Directory.SetCurrentDirectory("..\\autotiles\\");
                 Console.WriteLine("正在压缩自动元件图片文件...");
                 Zip("autotiles.h5data", autotilesList, e => e.Split(':')[0]+".png");
-                Console.WriteLine("======> 所有自动元件图片文件已压缩到 project/images/autotiles.h5data。");
+                Console.WriteLine("======> 所有自动元件图片文件已压缩到 project/autotiles/autotiles.h5data。");
                 Console.WriteLine("------ 自动元件图片文件压缩完毕 ------\n\n");
 
                 Console.WriteLine("正在压缩动画文件...");
