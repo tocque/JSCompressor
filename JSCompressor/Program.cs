@@ -22,6 +22,23 @@ namespace JSCompressor
             if (!File.Exists(directory + "main.js"))
                 directory = "..\\";
 
+            Console.WriteLine("====== 清理文件夹 ======\n");
+
+            string[] list = { ".idea/", "_docs/", "docs/", ".gitignore" };
+            foreach (string f in list)
+            {
+                deleteFile(directory + f);
+            }
+            list = new string[]{ "*.txt", "*.url", "*.md" };
+            var dir = new DirectoryInfo(directory);
+            foreach (string f in list)
+            {
+                foreach (var file in dir.EnumerateFiles(f))
+                {
+                    file.Delete();
+                }
+            }
+
             bool isV2 = Directory.Exists(directory + "project");
 
             string main="";
@@ -283,6 +300,21 @@ namespace JSCompressor
                 }
                 s.Finish();
                 s.Close();
+            }
+        }
+        static void deleteFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            else if (Directory.Exists(path))
+            {
+                foreach (string f in Directory.GetFileSystemEntries(path))
+                {
+                    deleteFile(f);
+                }
+                Directory.Delete(path);
             }
         }
     }
